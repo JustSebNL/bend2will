@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>obey — wiki</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --fg: #c9d1d9;
+    --accent: #58a6ff;
+    --accent2: #7ee787;
+    --border: #30363d;
+    --code-bg: #161b22;
+    --heading: #f0f6fc;
+    --muted: #8b949e;
+    --warn: #d29922;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.7;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  nav {
+    width: 280px;
+    min-width: 280px;
+    background: var(--code-bg);
+    border-right: 1px solid var(--border);
+    padding: 32px 20px;
+    overflow-y: auto;
+    position: fixed;
+    top: 0; bottom: 0; left: 0;
+  }
+  nav .logo {
+    color: var(--heading);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  nav .logo span { color: var(--accent); }
+  nav .version {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 28px;
+  }
+  nav h3 {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 24px 0 8px;
+  }
+  nav a {
+    display: block;
+    color: var(--fg);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+  nav a:hover { background: var(--border); color: var(--heading); }
+  nav a.active { background: rgba(88,166,255,0.12); color: var(--accent); }
+  nav a .alias { color: var(--muted); font-size: 11px; margin-left: 6px; }
+
+  main {
+    flex: 1;
+    margin-left: 280px;
+    padding: 48px 56px;
+    max-width: 960px;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, rgba(88,166,255,0.08), rgba(126,231,135,0.04));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 40px;
+  }
+  .hero h1 { color: var(--heading); font-size: 32px; margin-bottom: 4px; }
+  .hero h1 span { color: var(--accent); }
+  .hero .tagline { color: var(--muted); font-size: 15px; margin-bottom: 20px; }
+  .hero pre { margin: 0; }
+
+  h2 { color: var(--heading); font-size: 24px; margin-top: 44px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { color: var(--heading); font-size: 18px; margin-top: 28px; margin-bottom: 10px; }
+  h4 { color: var(--heading); font-size: 15px; margin-top: 20px; margin-bottom: 8px; }
+  p { margin-bottom: 14px; }
+  a { color: var(--accent); }
+
+  code {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 13px;
+    color: var(--accent);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    overflow-x: auto;
+    margin: 14px 0 22px;
+    position: relative;
+  }
+  pre code { background: none; border: none; padding: 0; color: var(--fg); line-height: 1.6; }
+  pre .comment { color: var(--muted); }
+  pre .cmd { color: var(--accent2); }
+  pre .flag { color: var(--warn); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 24px;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--heading); font-weight: 600; background: var(--code-bg); }
+  tr:hover td { background: rgba(88,166,255,0.03); }
+
+  .tag {
+    display: inline-block;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2px 12px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-left: 10px;
+    font-weight: 500;
+  }
+  .badge {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .badge-linux { background: rgba(88,166,255,0.15); color: var(--accent); }
+  .badge-windows { background: rgba(126,231,135,0.15); color: var(--accent2); }
+  .badge-macos { background: rgba(210,153,34,0.15); color: var(--warn); }
+
+  .card {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 14px 0;
+  }
+  .card h3, .card h4 { margin-top: 0; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+
+  .note {
+    border-left: 3px solid var(--accent);
+    background: rgba(88,166,255,0.06);
+    padding: 12px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .note.warn { border-left-color: var(--warn); background: rgba(210,153,34,0.06); }
+
+  .toc {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 20px 0;
+  }
+  .toc h4 { margin: 0 0 10px; color: var(--heading); }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 3px 0; }
+  .toc li li { padding-left: 18px; font-size: 13px; color: var(--muted); }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">obey<span>.</span></div>
+  <div class="version">v1.0.0 — bend to will</div>
+
+  <h3>Getting started</h3>
+  <a href="#overview" class="active">Overview</a>
+  <a href="#quickstart">Quick start</a>
+  <a href="#how-it-works">How it works</a>
+
+  <h3>Commands</h3>
+  <a href="#shoo">shoo<span class="alias">run</span></a>
+  <a href="#bind">bind<span class="alias">install</span></a>
+  <a href="#release">release<span class="alias">uninstall</span></a>
+  <a href="#serve">serve<span class="alias">start</span></a>
+  <a href="#terminate">terminate<span class="alias">stop</span></a>
+  <a href="#report">report<span class="alias">status</span></a>
+  <a href="#show">show<span class="alias">print</span></a>
+
+  <h3>Advanced</h3>
+  <a href="#portable">portable</a>
+  <a href="#config">Configuration</a>
+  <a href="#directives">Directives</a>
+  <a href="#platforms">Platforms</a>
+  <a href="#signals">Signals</a>
+  <a href="#exit-codes">Exit codes</a>
+</nav>
+
+<main>
+
+<div class="hero">
+  <h1>obey<span>.</span></h1>
+  <p class="tagline">Run and supervise an ordinary program as a managed service on Windows, Linux and macOS.</p>
+  <pre><code><span class="comment">// The two-line form — add to any Go program</span>
+<span class="cmd">func</span> main() {
+    <span class="cmd">return</span> bend2will.Guard(<span class="flag">"myapp"</span>, os.Args...)
+}</code></pre>
+</div>
+
+<h2 id="overview">Overview</h2>
+<p>obey puts a thin supervisor in front of a program that knows nothing about service managers. It handles starting at boot, restarting on crash, and stopping cleanly — without the program having to change at all.</p>
+
+<div class="grid">
+  <div class="card">
+    <h4>As a library</h4>
+    <p>Two lines in your <code>main()</code>. Guard reads the usual flags, supervises the command line, and translates whatever the platform's service manager does into a clean start and stop.</p>
+  </div>
+  <div class="card">
+    <h4>As a CLI</h4>
+    <p>The <code>obey</code> command installs, starts, stops, and removes services using whatever the host operating system provides.</p>
+  </div>
+</div>
+
+<h2 id="quickstart">Quick start</h2>
+<pre><code><span class="comment"># See what a service would look like</span>
+obey <span class="cmd">show</span> myapp --command /usr/bin/myapp --arguments --serve --port 5432
+
+<span class="comment"># Supervise a program in the foreground</span>
+obey <span class="cmd">shoo</span> myapp /usr/bin/myapp --serve
+
+<span class="comment"># Install as a real service</span>
+obey <span class="cmd">bind</span> myapp --command /usr/bin/myapp --enable --now
+
+<span class="comment"># Check its state</span>
+obey <span class="cmd">report</span> myapp
+
+<span class="comment"># Stop and remove</span>
+obey <span class="cmd">terminate</span> myapp
+obey <span class="cmd">release</span> myapp</code></pre>
+
+<h2 id="how-it-works">How it works</h2>
+<p>obey detects the platform, connects to its service manager if there is one, and then supervises. On Windows the SCM owns the main thread; on Linux systemd watches the unit file; on macOS launchd manages the plist. In every case the supervisor loop is the same: start the child, wait for readiness, watch until exit, restart with backoff if configured.</p>
+
+<div class="card">
+  <h4>Lifecycle</h4>
+  <p><code>Starting → Running → (Stopping) → Stopped</code></p>
+  <p style="margin-top:8px;">When <code>restart=true</code>, an unexpected exit returns to <code>Starting</code> after a backoff delay. A clean exit (code 0) or a stop request ends the service.</p>
+</div>
+
+<h2 id="shoo">shoo <span class="tag">alias: run</span></h2>
+<p>Supervise a program in the foreground. Translates Ctrl-C and SIGTERM into a graceful child shutdown.</p>
+<pre><code>obey shoo [options] [command [arguments...]]</code></pre>
+
+<h3>Options</h3>
+<table>
+  <tr><th>Flag</th><th>Description</th><th>Default</th></tr>
+  <tr><td><code>-name</code></td><td>Service name</td><td>command's base name</td></tr>
+  <tr><td><code>-display-name</code></td><td>Human-readable name</td><td>same as -name</td></tr>
+  <tr><td><code>-description</code></td><td>One-line description</td><td></td></tr>
+  <tr><td><code>-command</code></td><td>Program to run</td><td>first positional arg</td></tr>
+  <tr><td><code>-arguments</code></td><td>Arguments for the program</td><td></td></tr>
+  <tr><td><code>-workdir</code></td><td>Working directory</td><td></td></tr>
+  <tr><td><code>-user</code></td><td>Run as this user (Unix)</td><td></td></tr>
+  <tr><td><code>-group</code></td><td>Run as this group (Unix)</td><td></td></tr>
+  <tr><td><code>-priority</code></td><td>Scheduling priority</td><td>normal</td></tr>
+  <tr><td><code>-env</code></td><td>KEY=VALUE; repeatable</td><td></td></tr>
+  <tr><td><code>-after</code></td><td>Dependency; repeatable</td><td></td></tr>
+  <tr><td><code>-log</code></td><td>Log destination</td><td>stderr</td></tr>
+  <tr><td><code>-level</code></td><td>Log level</td><td>info</td></tr>
+  <tr><td><code>-mode</code></td><td>auto, service or console</td><td>auto</td></tr>
+  <tr><td><code>-restart</code></td><td>Restart on exit</td><td>true</td></tr>
+  <tr><td><code>-stop</code></td><td>signal, kill or exec</td><td>signal</td></tr>
+  <tr><td><code>-stop-command</code></td><td>Command for stop=exec</td><td></td></tr>
+  <tr><td><code>-stop-timeout</code></td><td>Graceful stop timeout</td><td>15s</td></tr>
+  <tr><td><code>-stop-signal</code></td><td>Signal for graceful stop</td><td>SIGTERM</td></tr>
+  <tr><td><code>-start-timeout</code></td><td>Start timeout</td><td>60s</td></tr>
+  <tr><td><code>-ready-command</code></td><td>Readiness check command</td><td></td></tr>
+  <tr><td><code>-ready-interval</code></td><td>Readiness retry interval</td><td>500ms</td></tr>
+  <tr><td><code>-c</code> / <code>-config</code></td><td>Read configuration from file</td><td></td></tr>
+</table>
+
+<h3>Examples</h3>
+<pre><code><span class="comment"># Simplest possible</span>
+obey shoo myapp /usr/bin/myapp --serve
+
+<span class="comment"># With explicit options</span>
+obey shoo myapp --command /usr/bin/myapp --arguments "--serve --port 5432" \
+  --workdir /var/lib/myapp --restart true --log @
+
+<span class="comment"># From a configuration file</span>
+obey shoo -c /etc/myapp/obey.conf myapp</code></pre>
+
+<h2 id="bind">bind <span class="tag">alias: install</span></h2>
+<p>Install a service with the platform's service manager (SCM / systemd / launchd).</p>
+<pre><code>obey bind [options] [command [arguments...]]</code></pre>
+
+<h3>Additional options</h3>
+<table>
+  <tr><th>Flag</th><th>Description</th></tr>
+  <tr><td><code>-unit-dir</code></td><td>Directory to write the service definition into</td></tr>
+  <tr><td><code>-enable</code></td><td>Start the service at boot</td></tr>
+  <tr><td><code>-now</code></td><td>Start the service immediately</td></tr>
+  <tr><td><code>-dry-run</code></td><td>Report what would happen without changing anything</td></tr>
+</table>
+
+<h3>Examples</h3>
+<pre><code><span class="comment"># Install a service</span>
+obey bind myapp --command /usr/bin/myapp --arguments "--serve"
+
+<span class="comment"># Install and start immediately</span>
+obey bind myapp --command /usr/bin/myapp --enable --now
+
+<span class="comment"># Preview without installing</span>
+obey bind myapp --command /usr/bin/myapp --dry-run
+
+<span class="comment"># Install to a custom directory</span>
+obey bind myapp --command /usr/bin/myapp --unit-dir /etc/systemd/system</code></pre>
+
+<h2 id="release">release <span class="tag">alias: uninstall</span></h2>
+<p>Stop and remove an installed service.</p>
+<pre><code>obey release [options] &lt;service&gt;</code></pre>
+
+<h3>Options</h3>
+<table>
+  <tr><th>Flag</th><th>Description</th></tr>
+  <tr><td><code>-name</code></td><td>Service name (instead of positional arg)</td></tr>
+  <tr><td><code>-dry-run</code></td><td>Report what would happen</td></tr>
+  <tr><td><code>--purge</code></td><td>Also remove saved data</td></tr>
+</table>
+
+<h3>Examples</h3>
+<pre><code>obey release myapp
+obey release myapp --purge
+obey release myapp --dry-run</code></pre>
+
+<h2 id="serve">serve <span class="tag">alias: start</span></h2>
+<p>Start an installed service.</p>
+<pre><code>obey serve [options] &lt;service&gt;</code></pre>
+
+<h3>Examples</h3>
+<pre><code>obey serve myapp
+obey serve myapp --dry-run</code></pre>
+
+<h2 id="terminate">terminate <span class="tag">alias: stop</span></h2>
+<p>Stop an installed service.</p>
+<pre><code>obey terminate [options] &lt;service&gt;</code></pre>
+
+<h3>Examples</h3>
+<pre><code>obey terminate myapp
+obey terminate myapp --dry-run</code></pre>
+
+<h2 id="report">report <span class="tag">alias: status</span></h2>
+<p>Report an installed service's state.</p>
+<pre><code>obey report [options] &lt;service&gt;</code></pre>
+
+<h3>Examples</h3>
+<pre><code>obey report myapp</code></pre>
+
+<h2 id="show">show <span class="tag">alias: print</span></h2>
+<p>Show the generated service definition without applying it.</p>
+<pre><code>obey show [options] [command [arguments...]]</code></pre>
+
+<h3>Additional options</h3>
+<table>
+  <tr><th>Flag</th><th>Description</th><th>Default</th></tr>
+  <tr><td><code>-with-instructions</code></td><td>Include manual post-install steps</td><td>true</td></tr>
+</table>
+
+<h3>Examples</h3>
+<pre><code>obey show myapp --command /usr/bin/myapp --arguments "--serve"
+obey show myapp --command /usr/bin/myapp --with-instructions=false</code></pre>
+
+<h2 id="portable">portable</h2>
+<p>The portable edition: the same commands, installed per-user without root.</p>
+<pre><code>obey portable &lt;command&gt; [options]</code></pre>
+
+<h3>Examples</h3>
+<pre><code>obey portable bind myapp --command /usr/bin/myapp
+obey portable serve myapp
+obey portable report myapp
+obey portable release myapp</code></pre>
+
+<h2 id="config">Configuration</h2>
+<p>Configuration files use an INI-like format. A file may hold several services; the section name selects which one to load.</p>
+<pre><code><span class="comment"># a comment, or a ; comment</span>
+[myapp]
+command = /usr/bin/myapp
+args    = --serve --port 5432
+restart = true
+workdir = /var/lib/myapp
+user    = myapp
+env     = PORT=5432
+env     = MODE=production
+after   = network-online.target</code></pre>
+
+<div class="note">
+  Flags override file values, which override defaults. Precedence: <code>flags &gt; file &gt; defaults</code>.
+</div>
+
+<h2 id="directives">Directives</h2>
+<table>
+  <tr><th>Directive</th><th>Description</th></tr>
+  <tr><td><code>name</code></td><td>Service name</td></tr>
+  <tr><td><code>displayname</code></td><td>Human-readable name</td></tr>
+  <tr><td><code>description</code></td><td>One-line description</td></tr>
+  <tr><td><code>command</code></td><td>Program to run</td></tr>
+  <tr><td><code>args</code></td><td>Arguments for the program</td></tr>
+  <tr><td><code>arguments</code></td><td>Alias for args</td></tr>
+  <tr><td><code>env</code></td><td>Environment variable, KEY=VALUE; repeatable</td></tr>
+  <tr><td><code>workdir</code></td><td>Working directory</td></tr>
+  <tr><td><code>user</code></td><td>Run as this user (Unix, needs root)</td></tr>
+  <tr><td><code>group</code></td><td>Run as this group (Unix, needs root)</td></tr>
+  <tr><td><code>priority</code></td><td>Scheduling priority: normal, high, idle or realtime</td></tr>
+  <tr><td><code>mode</code></td><td>auto, service or console</td></tr>
+  <tr><td><code>log</code></td><td>Log destination: "" or - for stderr, @ for system log, or a file path</td></tr>
+  <tr><td><code>level</code></td><td>Log level: trace, debug, info, warn, error or off</td></tr>
+  <tr><td><code>debug</code></td><td>Alias for level</td></tr>
+  <tr><td><code>restart</code></td><td>true or false</td></tr>
+  <tr><td><code>restart_initial_delay</code></td><td>Delay before the first restart</td></tr>
+  <tr><td><code>restart_max_delay</code></td><td>Upper bound on the restart delay</td></tr>
+  <tr><td><code>restart_reset_after</code></td><td>Uptime that resets the backoff</td></tr>
+  <tr><td><code>restart_factor</code></td><td>Multiplier per consecutive failure</td></tr>
+  <tr><td><code>stop</code></td><td>How to stop: signal, kill or exec</td></tr>
+  <tr><td><code>stop_command</code></td><td>Command run by stop=exec; %PID% is replaced</td></tr>
+  <tr><td><code>stop_timeout</code></td><td>How long a graceful stop may take</td></tr>
+  <tr><td><code>stop_signal</code></td><td>Signal used for a graceful stop</td></tr>
+  <tr><td><code>start_timeout</code></td><td>How long a start may take</td></tr>
+  <tr><td><code>ready_command</code></td><td>Command that must succeed before running is reported</td></tr>
+  <tr><td><code>ready_interval</code></td><td>How often to retry the ready command</td></tr>
+  <tr><td><code>after</code></td><td>A unit or service that must start first; repeatable</td></tr>
+  <tr><td><code>depends_on</code></td><td>Alias for after</td></tr>
+</table>
+
+<h2 id="platforms">Platforms</h2>
+<table>
+  <tr><th>Platform</th><th>Service manager</th><th>Details</th></tr>
+  <tr><td><span class="badge badge-windows">Windows</span></td><td>SCM (advapi32)</td><td>SetServiceStatus, job objects for process trees, SERVICE_CONTROL_STOP</td></tr>
+  <tr><td><span class="badge badge-linux">Linux</span></td><td>systemd</td><td>Type=notify, sd_notify over $NOTIFY_SOCKET</td></tr>
+  <tr><td><span class="badge badge-macos">macOS</span></td><td>launchd</td><td>LaunchDaemon plist, liveness inferred from process</td></tr>
+  <tr><td>Other</td><td>POSIX sh wrapper</td><td>For whatever init system the host has</td></tr>
+</table>
+
+<h2 id="signals">Signals</h2>
+<table>
+  <tr><th>Signal</th><th>obey's response</th></tr>
+  <tr><td>SIGINT / Ctrl-C</td><td>Graceful stop — same as stop command</td></tr>
+  <tr><td>SIGTERM</td><td>Graceful stop</td></tr>
+  <tr><td>SIGKILL</td><td>Cannot be caught — process dies immediately</td></tr>
+</table>
+
+<div class="note warn">
+  A second SIGINT or SIGTERM during shutdown shortens the wait but cannot make the shutdown ruder. The child is always given StopTimeout to exit before being killed.
+</div>
+
+<h2 id="absorb">Absorbing bend2will into another Go project</h2>
+<p>Clone the repo inside your project's <code>tools/</code> dir and add a few lines:</p>
+<pre><code>cd your-project/tools
+git clone https://github.com/bend2will/bend2will.git</code></pre>
+
+<p>Add to your <code>go.mod</code>:</p>
+<pre><code>replace github.com/bend2will/bend2will => ./tools/bend2will</code></pre>
+
+<p>Your <code>main.go</code>:</p>
+<pre><code><span class="cmd">package</span> main
+
+<span class="cmd">import</span> (
+    <span class="flag">"os"</span>
+    <span class="flag">"github.com/bend2will/bend2will"</span>
+)
+
+<span class="cmd">func</span> main() {
+    <span class="cmd">if</span> err := bend2will.Guard(<span class="flag">"myapp"</span>, os.Args...); err != nil {
+        bend2will.Fatal(err)
+    }
+}</code></pre>
+
+<p>Build it:</p>
+<pre><code>go build -o bin/myservice ./tools/bend2will/cmd/obey</code></pre>
+
+<p>The resulting binary is a standalone service wrapper. It accepts all the same flags as the <code>obey</code> CLI and can be installed, started, stopped, and removed as a real service.</p>
+
+<h2 id="exit-codes">Exit codes</h2>
+<table>
+  <tr><th>Code</th><th>Meaning</th></tr>
+  <tr><td>0</td><td>Success</td></tr>
+  <tr><td>1</td><td>Runtime failure</td></tr>
+  <tr><td>2</td><td>Usage error</td></tr>
+</table>
+
+<footer>
+  <p>obey v1.0.0 — MIT License — bend to will</p>
+</footer>
+
+</main>
+
+<script>
+  const links = document.querySelectorAll('nav a');
+  const sections = document.querySelectorAll('main h2[id]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    links.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
